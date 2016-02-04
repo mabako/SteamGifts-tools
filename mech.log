@@ -1,0 +1,19 @@
+# Logfile created on 2016-02-04 13:17:08 +0100 by logger.rb/47272
+I, [2016-02-04T13:17:08.619852 #4440]  INFO -- : Net::HTTP::Get: /giveaway/svp0E
+D, [2016-02-04T13:17:08.619852 #4440] DEBUG -- : request-header: accept-encoding => gzip,deflate,identity
+D, [2016-02-04T13:17:08.620375 #4440] DEBUG -- : request-header: accept => */*
+D, [2016-02-04T13:17:08.620375 #4440] DEBUG -- : request-header: user-agent => Mechanize/2.7.4 Ruby/2.2.3p173 (http://github.com/sparklemotion/mechanize/)
+D, [2016-02-04T13:17:08.620375 #4440] DEBUG -- : request-header: accept-charset => ISO-8859-1,utf-8;q=0.7,*;q=0.7
+D, [2016-02-04T13:17:08.620375 #4440] DEBUG -- : request-header: accept-language => en-us,en;q=0.5
+D, [2016-02-04T13:17:08.620375 #4440] DEBUG -- : request-header: host => www.steamgifts.com
+I, [2016-02-04T13:17:08.972784 #4440]  INFO -- : status: Net::HTTPNotFound 1.1 404 Not Found
+D, [2016-02-04T13:17:08.973283 #4440] DEBUG -- : response-header: date => Thu, 04 Feb 2016 12:17:18 GMT
+D, [2016-02-04T13:17:08.973283 #4440] DEBUG -- : response-header: server => Apache/2.4.6 (CentOS)
+D, [2016-02-04T13:17:08.973784 #4440] DEBUG -- : response-header: last-modified => Wed, 18 Nov 2015 13:49:32 GMT
+D, [2016-02-04T13:17:08.973784 #4440] DEBUG -- : response-header: etag => "1c9-524d0e9735300"
+D, [2016-02-04T13:17:08.973784 #4440] DEBUG -- : response-header: accept-ranges => bytes
+D, [2016-02-04T13:17:08.974272 #4440] DEBUG -- : response-header: content-length => 457
+D, [2016-02-04T13:17:08.974272 #4440] DEBUG -- : response-header: keep-alive => timeout=3, max=600
+D, [2016-02-04T13:17:08.974768 #4440] DEBUG -- : response-header: connection => Keep-Alive
+D, [2016-02-04T13:17:08.974768 #4440] DEBUG -- : response-header: content-type => text/html; charset=utf-8
+D, [2016-02-04T13:17:08.975286 #4440] DEBUG -- : Read 457 bytes (457 total)
