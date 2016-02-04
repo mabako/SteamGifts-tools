@@ -1,5 +1,5 @@
 require 'mechanize'
-require_relative '../model/giveaway.rb'
+require_relative '../model/giveaway'
 
 module Parser
   class GiveawayParser

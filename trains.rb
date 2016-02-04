@@ -1,7 +1,7 @@
 require 'set'
 
-require_relative 'model/giveaway.rb'
-require_relative 'parser/giveaway_parser.rb'
+require_relative 'model/giveaway'
+require_relative 'parser/giveaway_parser'
 
 @parser = Parser::GiveawayParser.new
 
