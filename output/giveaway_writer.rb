@@ -2,7 +2,7 @@ require 'nokogiri'
 
 module Output
   class GiveawayWriter
-    attr_accessor :wishlist, :normal, :bundled
+    attr_accessor :wishlist, :normal, :bundled, :exists_in_account, :other_links
 
     def build
       builder = Nokogiri::HTML::Builder.new do |doc|
@@ -11,6 +11,21 @@ module Output
             fragment(doc, 'Wishlist', wishlist) unless wishlist.empty?
             fragment(doc, 'Non-Bundled Games', normal)
             fragment(doc, 'Bundled Games', bundled) unless bundled.empty?
+            fragment(doc, 'Exists in Account', exists_in_account) unless exists_in_account.empty?
+
+            unless other_links.empty?
+              doc.h1 'Other Links'
+              doc.h2 "(#{other_links.length})"
+              doc.ul {
+                other_links.each { |link|
+                  doc.li {
+                    doc.a(href: link) {
+                      doc.text link
+                    }
+                  }
+                }
+              }
+            end
           }
         }
       end

@@ -27,6 +27,10 @@ end
 
 # parser for all giveaways
 @giveaway_parser = Parser::GiveawayParser.new(@wishlist, @bundled_games)
+if File.exist?('data/steamgifts_session_id.txt')
+  @giveaway_parser.session_id = File.read('data/steamgifts_session_id.txt').chomp
+end
+
 @discussion_parser = Parser::DiscussionParser.new
 
 if File.exist?('data/sgtools_session_id.txt')
@@ -37,6 +41,7 @@ end
 def fetch_giveaways(checking)
   to_check = Set.new
   checked = Set.new
+  unchecked_links = Set.new
 
   checking.each do |giveaway_id|
     giveaway = case
@@ -56,21 +61,25 @@ def fetch_giveaways(checking)
       @last_giveaway = giveaway
     end
     to_check.merge giveaway.linked_giveaway_ids
+    unchecked_links.merge giveaway.other_links
   end
 
-  return checked, to_check
+  return checked, to_check, unchecked_links
 end
 
 giveaways_to_check = ARGV.to_set
 checked_giveaways = SortedSet.new
+unchecked_links = SortedSet.new
 while giveaways_to_check.length > 0 do
-  newly_checked_giveaways, giveaways_to_check = fetch_giveaways(giveaways_to_check)
+  newly_checked_giveaways, giveaways_to_check, other_links = fetch_giveaways(giveaways_to_check)
 
   # keep a list so we'll be able to evaluate those giveaways later
   checked_giveaways.merge newly_checked_giveaways
 
   # remove all previously seen giveaways
   giveaways_to_check.subtract newly_checked_giveaways.map { |giveaway| giveaway.id }
+
+  unchecked_links.merge other_links
 end
 
 puts '', "Found #{checked_giveaways.length} giveaways"
@@ -78,8 +87,10 @@ Launchy.open(@last_giveaway.uri) unless @last_giveaway.nil?
 
 # generate HTML file
 writer = Output::GiveawayWriter.new
+writer.exists_in_account, checked_giveaways = checked_giveaways.partition { |giveaway| giveaway.exists_in_account }
 writer.wishlist, checked_giveaways = checked_giveaways.partition { |giveaway| @wishlist.include? giveaway.steam_id }
 writer.bundled, writer.normal = checked_giveaways.partition { |giveaway| @bundled_games.include? giveaway.steam_id }
+writer.other_links = other_links
 
 Dir.mkdir('trains') unless Dir.exist?('trains')
 filename = "trains/#{ARGV.join('_').gsub('*', '').gsub('!', '')}.html"

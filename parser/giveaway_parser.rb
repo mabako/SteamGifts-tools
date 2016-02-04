@@ -11,11 +11,16 @@ module Parser
       @bundled_games = bundled_games
     end
 
+    def session_id= session_id
+      @robot.cookie_jar << Mechanize::Cookie.new(domain: 'www.steamgifts.com', name: 'PHPSESSID', value: session_id, path: '/', expires: (Date.today + 7).to_s)
+    end
+
     def parse(giveaway_id)
       @count += 1
 
       url = "http://www.steamgifts.com/giveaway/#{giveaway_id}/"
       print "#{@count}: #{url}"
+      print ' '
 
       page = @robot.get url
 
@@ -23,12 +28,16 @@ module Parser
       giveaway.uri = page.uri
       giveaway.title = page.title
 
-      # is this a game with an id?
+      # does the giveaway exist in the account? This can only ever be true if
+      # a session id was set.
+      giveaway.exists_in_account = !page.css('.sidebar__error.is-disabled').first.nil?
+      print 'E' if giveaway.exists_in_account
+
+      # If this game has an image, it's likely on Steam
       image = page.css('a.global__image-outer-wrap--game-large').first
       if !image.nil?
         giveaway.steam_id = URI.parse(image.attr('href')).path.split('/')[2].to_i
 
-        print ' '
         print 'W' if @wishlist.include?(giveaway.steam_id)
         print 'B' if @bundled_games.include?(giveaway.steam_id)
       end
