@@ -40,7 +40,11 @@ module Output
         items.each { |giveaway|
           doc.li {
             doc.a(href: giveaway.uri) {
-              doc.text giveaway.title
+              if giveaway.enterable or giveaway.exists_in_account
+                doc.text giveaway.title
+              else
+                doc.s giveaway.title
+              end
             }
           }
         }

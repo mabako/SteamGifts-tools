@@ -33,9 +33,14 @@ module Parser
       giveaway.exists_in_account = !page.css('.sidebar__error.is-disabled').first.nil?
       print 'E' if giveaway.exists_in_account
 
+      # Have we entered this giveaway? This, likewise, requires a session id.
+      enterableForm = page.css('.sidebar__entry-insert').first
+      giveaway.enterable = !enterableForm.attr('class').include?('is-hidden') unless enterableForm.nil?
+      print 'x' if giveaway.enterable
+
       # If this game has an image, it's likely on Steam
       image = page.css('a.global__image-outer-wrap--game-large').first
-      if !image.nil?
+      unless image.nil?
         giveaway.steam_id = URI.parse(image.attr('href')).path.split('/')[2].to_i
 
         print 'W' if @wishlist.include?(giveaway.steam_id)
@@ -44,7 +49,7 @@ module Parser
 
       # do we have a description? If not, we don't really need to follow links
       description = page.css('.page__description__display-state .markdown')[0]
-      if !description.nil?
+      unless description.nil?
         giveaway.description = description.content
 
         description.css("a").each do |link|

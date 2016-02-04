@@ -2,7 +2,7 @@ require 'uri'
 
 module Model
   class Giveaway
-    attr_accessor :uri, :title, :description, :linked_urls, :steam_id, :not_enterable, :exists_in_account
+    attr_accessor :uri, :title, :description, :linked_urls, :steam_id, :not_enterable, :exists_in_account, :enterable
 
     def initialize
       @linked_urls = Set.new
