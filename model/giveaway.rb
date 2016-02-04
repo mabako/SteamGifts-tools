@@ -22,6 +22,10 @@ module Model
       title <=> other.title
     end
 
+    def == other
+      id == other.id
+    end
+
     def self.id_from_uri(uri)
       URI(uri).path.split('/')[2]
     end
