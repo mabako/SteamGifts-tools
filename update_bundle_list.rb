@@ -30,6 +30,4 @@ puts '', '===', '', "Got #{current_page} pages worth of bundled games, totalling
 Dir.mkdir('data') unless Dir.exist?('data')
 
 # write the bundled games to YAML
-file = File.new('data/bundled_games.yml', 'w+')
-YAML::dump(bundled_games, file)
-file.close
+File.write('data/bundled_games.yml', YAML::dump(bundled_games.to_a, file))

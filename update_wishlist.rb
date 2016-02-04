@@ -12,6 +12,4 @@ puts "Found #{wishlist.length} games on your wishlist"
 Dir.mkdir('data') unless Dir.exist?('data')
 
 # write the bundled games to YAML
-file = File.new('data/wishlist.yml', 'w+')
-YAML::dump(wishlist, file)
-file.close
+File.write('data/wishlist.yml', YAML::dump(wishlist, file))

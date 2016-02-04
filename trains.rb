@@ -1,9 +1,30 @@
+require 'launchy'
 require 'set'
 
+require_relative 'model/game'
 require_relative 'model/giveaway'
+require_relative 'output/giveaway_writer'
 require_relative 'parser/giveaway_parser'
 
-@parser = Parser::GiveawayParser.new
+# create a data folder, unless it already exists
+Dir.mkdir('data') unless Dir.exist?('data')
+
+# initialize the wishlist to be used for game checking
+if File.exist?('data/wishlist.ymlx')
+  @wishlist = YAML.load_file('data/wishlist.ymlx').map { |game| game.steam_id }
+else
+  @wishlist = Array.new
+end
+
+# the list of bundled games
+if File.exist?('data/bundled_games.yml')
+  @bundled_games = YAML.load_file('data/bundled_games.yml').map { |game| game.steam_id }
+else
+  @bundled_games = Array.new
+end
+
+# parser for all giveaways
+@parser = Parser::GiveawayParser.new(@wishlist, @bundled_games)
 
 def fetch_giveaways(checking)
   to_check = Set.new
@@ -31,7 +52,15 @@ while giveaways_to_check.length > 0 do
   giveaways_to_check.subtract newly_checked_giveaways.map { |giveaway| giveaway.id }
 end
 
-puts '', '== found giveaways ==', ''
-checked_giveaways.each do |giveaway|
-  puts giveaway.uri
+puts '', "Found #{checked_giveaways.length} giveaways"
+
+# generate HTML file
+writer = Output::GiveawayWriter.new
+writer.wishlist, checked_giveaways = checked_giveaways.partition { |giveaway| @wishlist.include? giveaway.steam_id }
+writer.bundled, writer.normal = checked_giveaways.partition { |giveaway| @bundled_games.include? giveaway.steam_id }
+
+Dir.mkdir('trains') unless Dir.exist?('trains')
+filename = "trains/#{ARGV.join('_')}.html"
+if File.write(filename, writer.build)
+  Launchy.open filename
 end
