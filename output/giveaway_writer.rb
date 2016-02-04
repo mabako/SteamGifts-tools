@@ -20,6 +20,7 @@ module Output
     private
     def fragment(doc, title, items)
       doc.h1 title
+      doc.h2 "(#{items.length})"
       doc.ul {
         items.each { |giveaway|
           doc.li {
