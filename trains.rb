@@ -4,7 +4,9 @@ require 'set'
 require_relative 'model/game'
 require_relative 'model/giveaway'
 require_relative 'output/giveaway_writer'
+require_relative 'parser/discussion_parser'
 require_relative 'parser/giveaway_parser'
+require_relative 'parser/sgtools_client'
 
 # create a data folder, unless it already exists
 Dir.mkdir('data') unless Dir.exist?('data')
@@ -24,16 +26,35 @@ else
 end
 
 # parser for all giveaways
-@parser = Parser::GiveawayParser.new(@wishlist, @bundled_games)
+@giveaway_parser = Parser::GiveawayParser.new(@wishlist, @bundled_games)
+@discussion_parser = Parser::DiscussionParser.new
 
+if File.exist?('data/sgtools_session_id.txt')
+  @sgtools_client = Parser::SGToolsClient.new File.read('data/sgtools_session_id.txt').chomp
+end
+
+@last_giveaway = nil
 def fetch_giveaways(checking)
   to_check = Set.new
   checked = Set.new
 
   checking.each do |giveaway_id|
-    giveaway = @parser.parse(giveaway_id)
+    giveaway = case
+    when giveaway_id.start_with?('*')
+      @discussion_parser.parse(giveaway_id)
+    when giveaway_id.start_with?('!')
+      raise "sgtools account not configured while trying #{giveaway_id}." if @sgtools_client.nil?
+      @sgtools_client.fetch_giveaway(giveaway_id)
+    else
+      @giveaway_parser.parse(giveaway_id)
+    end
 
-    checked << giveaway
+    next if giveaway.nil?
+
+    if !giveaway.fake
+      checked << giveaway
+      @last_giveaway = giveaway
+    end
     to_check.merge giveaway.linked_giveaway_ids
   end
 
@@ -53,6 +74,7 @@ while giveaways_to_check.length > 0 do
 end
 
 puts '', "Found #{checked_giveaways.length} giveaways"
+Launchy.open(@last_giveaway.uri) unless @last_giveaway.nil?
 
 # generate HTML file
 writer = Output::GiveawayWriter.new
@@ -60,7 +82,7 @@ writer.wishlist, checked_giveaways = checked_giveaways.partition { |giveaway| @w
 writer.bundled, writer.normal = checked_giveaways.partition { |giveaway| @bundled_games.include? giveaway.steam_id }
 
 Dir.mkdir('trains') unless Dir.exist?('trains')
-filename = "trains/#{ARGV.join('_')}.html"
+filename = "trains/#{ARGV.join('_').gsub('*', '').gsub('!', '')}.html"
 if File.write(filename, writer.build)
   Launchy.open filename
 end

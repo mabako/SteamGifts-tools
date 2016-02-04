@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'json'
+
 # parse & write HTML
 gem 'nokogiri'
 gem 'mechanize'
