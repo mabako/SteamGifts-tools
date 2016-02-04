@@ -16,7 +16,7 @@ module Parser
       giveaway = Model::Giveaway.new
       giveaway.uri = url
       giveaway.title = page.title
-      giveaway.fake = true
+      giveaway.not_enterable = true
 
       # do we have a description? If not, we don't really need to follow links
       description = page.css('.comment__display-state .markdown').first

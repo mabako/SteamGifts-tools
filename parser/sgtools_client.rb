@@ -25,7 +25,7 @@ module Parser
           giveaway = Model::Giveaway.new
           giveaway.uri = url
           giveaway.title = 'SGTools'
-          giveaway.fake = true
+          giveaway.not_enterable = true
           giveaway.linked_urls << URI(found_url)
           giveaway
         else

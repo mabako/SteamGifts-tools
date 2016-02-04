@@ -51,7 +51,7 @@ def fetch_giveaways(checking)
 
     next if giveaway.nil?
 
-    if !giveaway.fake
+    if !giveaway.not_enterable
       checked << giveaway
       @last_giveaway = giveaway
     end
