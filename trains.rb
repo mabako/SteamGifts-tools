@@ -77,7 +77,7 @@ while giveaways_to_check.length > 0 do
   checked_giveaways.merge newly_checked_giveaways
 
   # remove all previously seen giveaways
-  giveaways_to_check.subtract newly_checked_giveaways.map { |giveaway| giveaway.id }
+  giveaways_to_check.subtract checked_giveaways.map { |giveaway| giveaway.id }
 
   unchecked_links.merge other_links
 end
