@@ -11,7 +11,7 @@ module Output
             fragment(doc, 'Wishlist', wishlist) unless wishlist.empty?
             fragment(doc, 'Non-Bundled Games', normal)
             fragment(doc, 'Bundled Games', bundled) unless bundled.empty?
-            fragment(doc, 'Exists in Account', exists_in_account) unless exists_in_account.empty?
+            fragment(doc, 'Exists in Account / Missing Base Game', exists_in_account) unless exists_in_account.empty?
 
             unless other_links.empty?
               doc.h1 'Other Links'
